@@ -61,12 +61,156 @@
 
     <li class="apidocModuleLi"><a href="#apidoc.module.ttf2woff">module ttf2woff</a><ol>
 
+        <li>
+
+            <a class="apidocElementLiA" href="#apidoc.element.ttf2woff.ttf2woff">
+            function <span class="apidocSignatureSpan"></span>ttf2woff
+            <span class="apidocSignatureSpan">(arr, options)</span>
+            </a>
+
+        </li>
+
     </ol></li>
 
 </ol></div>
 
 <div class="apidocSectionDiv">
 <h1><a href="#apidoc.module.ttf2woff" id="apidoc.module.ttf2woff">module ttf2woff</a></h1>
+
+
+    <h2>
+        <a href="#apidoc.element.ttf2woff.ttf2woff" id="apidoc.element.ttf2woff.ttf2woff">
+        function <span class="apidocSignatureSpan"></span>ttf2woff
+        <span class="apidocSignatureSpan">(arr, options)</span>
+        </a>
+    </h2>
+    <ul>
+    <li>description and source-code<pre class="apidocCodePre">function ttf2woff(arr, options) {
+  var buf = new ByteBuffer(arr);
+
+  options = options || {};
+
+  var version = {
+    maj: 0,
+    min: 1
+  };
+  var numTables = buf.getUint16(4);
+  //var sfntVersion = buf.getUint32 (0);
+  var flavor = 0x10000;
+
+  var woffHeader = new ByteBuffer(SIZEOF.WOFF_HEADER);
+
+  woffHeader.setUint32(WOFF_OFFSET.MAGIC, MAGIC.WOFF);
+  woffHeader.setUint16(WOFF_OFFSET.NUM_TABLES, numTables);
+  woffHeader.setUint16(WOFF_OFFSET.RESERVED, 0);
+  woffHeader.setUint32(WOFF_OFFSET.SFNT_SIZE, 0);
+  woffHeader.setUint32(WOFF_OFFSET.META_OFFSET, 0);
+  woffHeader.setUint32(WOFF_OFFSET.META_LENGTH, 0);
+  woffHeader.setUint32(WOFF_OFFSET.META_ORIG_LENGTH, 0);
+  woffHeader.setUint32(WOFF_OFFSET.PRIV_OFFSET, 0);
+  woffHeader.setUint32(WOFF_OFFSET.PRIV_LENGTH, 0);
+
+  var entries = [];
+
+  var i, tableEntry;
+
+  for (i = 0; i &#x3c; numTables; ++i) {
+    var data = new ByteBuffer(buf.buffer, SIZEOF.SFNT_HEADER + i * SIZEOF.SFNT_TABLE_ENTRY);
+
+    tableEntry = {
+      Tag: new ByteBuffer(data, SFNT_OFFSET.TAG, 4),
+      checkSum: data.getUint32(SFNT_OFFSET.CHECKSUM),
+      Offset: data.getUint32(SFNT_OFFSET.OFFSET),
+      Length: data.getUint32(SFNT_OFFSET.LENGTH)
+    };
+    entries.push (tableEntry);
+  }
+  entries = entries.sort(function (a, b) {
+    var aStr = a.Tag.toString();
+    var bStr = b.Tag.toString();
+
+    return aStr === bStr ? 0 : aStr &#x3c; bStr ? -1 : 1;
+  });
+
+  var offset = SIZEOF.WOFF_HEADER + numTables * SIZEOF.WOFF_ENTRY;
+  var woffSize = offset;
+  var sfntSize = SIZEOF.SFNT_HEADER + numTables * SIZEOF.SFNT_TABLE_ENTRY;
+
+  var tableBuf = new ByteBuffer(numTables * SIZEOF.WOFF_ENTRY);
+
+  for (i = 0; i &#x3c; numTables; ++i) {
+    tableEntry = entries[i];
+
+    if (tableEntry.Tag.toString() !== &#x27;head&#x27;) {
+      var algntable = new ByteBuffer(buf.buffer, tableEntry.Offset, longAlign(tableEntry.Length));
+
+      if (calc_checksum(algntable) !== tableEntry.checkSum) {
+        throw &#x27;Checksum error in &#x27; + tableEntry.Tag.toString();
+      }
+    }
+
+    tableBuf.setUint32(i * SIZEOF.WOFF_ENTRY + WOFF_ENTRY_OFFSET.TAG, tableEntry.Tag.getUint32(0));
+    tableBuf.setUint32(i * SIZEOF.WOFF_ENTRY + WOFF_ENTRY_OFFSET.LENGTH, tableEntry.Length);
+    tableBuf.setUint32(i * SIZEOF.WOFF_ENTRY + WOFF_ENTRY_OFFSET.CHECKSUM, tableEntry.checkSum);
+    sfntSize += longAlign(tableEntry.Length);
+  }
+
+  var sfntOffset = SIZEOF.SFNT_HEADER + entries.length * SIZEOF.SFNT_TABLE_ENTRY;
+  var csum = calc_checksum (new ByteBuffer(buf.buffer, 0, SIZEOF.SFNT_HEADER));
+
+  for (i = 0; i &#x3c; entries.length; ++i) {
+    tableEntry = entries[i];
+
+    var b = new ByteBuffer(SIZEOF.SFNT_TABLE_ENTRY);
+
+    b.setUint32(SFNT_OFFSET.TAG, tableEntry.Tag.getUint32(0));
+    b.setUint32(SFNT_OFFSET.CHECKSUM, tableEntry.checkSum);
+    b.setUint32(SFNT_OFFSET.OFFSET, sfntOffset);
+    b.setUint32(SFNT_OFFSET.LENGTH, tableEntry.Length);
+    sfntOffset += longAlign(tableEntry.Length);
+    csum += calc_checksum (b);
+    csum += tableEntry.checkSum;
+  }
+
+  var checksumAdjustment = ulong(MAGIC.CHECKSUM_ADJUSTMENT - csum);
+
+  var len, woffDataChains = [];
+
+  for (i = 0; i &#x3c; entries.length; ++i) {
+    tableEntry = entries[i];
+
+    var sfntData = new ByteBuffer(buf.buffer, tableEntry.Offset, tableEntry.Length);
+
+    if (tableEntry.Tag.toString() === &#x27;head&#x27;) {
+      version.maj = sfntData.getUint16(SFNT_ENTRY_OFFSET.VERSION_MAJ);
+      version.min = sfntData.getUint16(SFNT_ENTRY_OFFSET.VERSION_MIN);
+      flavor = sfntData.getUint32(SFNT_ENTRY_OFFSET.FLAVOR);
+      sfntData.setUint32 (SFNT_ENTRY_OFFSET.CHECKSUM_ADJUSTMENT, checksumAdjustment);
+    }
+
+    var res = deflate(sfntData.toArray());
+
+    var compLength;
+
+    // We should use compression only if it really save space (standard requirement).
+    // Also, data should be aligned to long (with zeros?).
+    compLength = Math.min(res.length, sfntData.length);
+    len = longAlign(compLength);
+
+    var woffData = new ByteBuffer(len);
+
+    woffData.fill(0);
+
+    if (res.length &#x3e;= sfntData.length) {
+      woffData.writeBytes(sfntData.toArray());
+    } else {
+      woffData.writeBytes(res);
+    }
+
+    tableBuf.setUint32(i * SIZEOF.WOFF ...</pre></li>
+    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    </ul>
+
 
 </div>
 

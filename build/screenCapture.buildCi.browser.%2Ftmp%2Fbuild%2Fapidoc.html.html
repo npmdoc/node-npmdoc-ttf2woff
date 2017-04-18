@@ -1,4 +1,4 @@
-<div class="apidocDiv">
+<html><head></head><body><div class="apidocDiv">
 <style>
 /*csslint
 */
@@ -47,17 +47,10 @@
 }
 </style>
 <h1>api documentation for
-    <a
-
-        href="https://github.com/fontello/ttf2woff#readme"
-
-    >ttf2woff (v2.0.1)</a>
+    <a href="https://github.com/fontello/ttf2woff#readme">ttf2woff (v2.0.1)</a>
 </h1>
 <h4>Convert TTF font to WOFF</h4>
-<div class="apidocSectionDiv"><a
-    href="#apidoc.tableOfContents"
-    id="apidoc.tableOfContents"
-><h1>table of contents</h1></a><ol>
+<div class="apidocSectionDiv"><a href="#apidoc.tableOfContents" id="apidoc.tableOfContents"><h1>table of contents</h1></a><ol>
 
     <li class="apidocModuleLi"><a href="#apidoc.module.ttf2woff">module ttf2woff</a><ol>
 
@@ -114,7 +107,7 @@
 
   var i, tableEntry;
 
-  for (i = 0; i &#x3c; numTables; ++i) {
+  for (i = 0; i &lt; numTables; ++i) {
     var data = new ByteBuffer(buf.buffer, SIZEOF.SFNT_HEADER + i * SIZEOF.SFNT_TABLE_ENTRY);
 
     tableEntry = {
@@ -129,7 +122,7 @@
     var aStr = a.Tag.toString();
     var bStr = b.Tag.toString();
 
-    return aStr === bStr ? 0 : aStr &#x3c; bStr ? -1 : 1;
+    return aStr === bStr ? 0 : aStr &lt; bStr ? -1 : 1;
   });
 
   var offset = SIZEOF.WOFF_HEADER + numTables * SIZEOF.WOFF_ENTRY;
@@ -138,14 +131,14 @@
 
   var tableBuf = new ByteBuffer(numTables * SIZEOF.WOFF_ENTRY);
 
-  for (i = 0; i &#x3c; numTables; ++i) {
+  for (i = 0; i &lt; numTables; ++i) {
     tableEntry = entries[i];
 
-    if (tableEntry.Tag.toString() !== &#x27;head&#x27;) {
+    if (tableEntry.Tag.toString() !== 'head') {
       var algntable = new ByteBuffer(buf.buffer, tableEntry.Offset, longAlign(tableEntry.Length));
 
       if (calc_checksum(algntable) !== tableEntry.checkSum) {
-        throw &#x27;Checksum error in &#x27; + tableEntry.Tag.toString();
+        throw 'Checksum error in ' + tableEntry.Tag.toString();
       }
     }
 
@@ -158,7 +151,7 @@
   var sfntOffset = SIZEOF.SFNT_HEADER + entries.length * SIZEOF.SFNT_TABLE_ENTRY;
   var csum = calc_checksum (new ByteBuffer(buf.buffer, 0, SIZEOF.SFNT_HEADER));
 
-  for (i = 0; i &#x3c; entries.length; ++i) {
+  for (i = 0; i &lt; entries.length; ++i) {
     tableEntry = entries[i];
 
     var b = new ByteBuffer(SIZEOF.SFNT_TABLE_ENTRY);
@@ -176,12 +169,12 @@
 
   var len, woffDataChains = [];
 
-  for (i = 0; i &#x3c; entries.length; ++i) {
+  for (i = 0; i &lt; entries.length; ++i) {
     tableEntry = entries[i];
 
     var sfntData = new ByteBuffer(buf.buffer, tableEntry.Offset, tableEntry.Length);
 
-    if (tableEntry.Tag.toString() === &#x27;head&#x27;) {
+    if (tableEntry.Tag.toString() === 'head') {
       version.maj = sfntData.getUint16(SFNT_ENTRY_OFFSET.VERSION_MAJ);
       version.min = sfntData.getUint16(SFNT_ENTRY_OFFSET.VERSION_MIN);
       flavor = sfntData.getUint32(SFNT_ENTRY_OFFSET.FLAVOR);
@@ -201,7 +194,7 @@
 
     woffData.fill(0);
 
-    if (res.length &#x3e;= sfntData.length) {
+    if (res.length &gt;= sfntData.length) {
       woffData.writeBytes(sfntData.toArray());
     } else {
       woffData.writeBytes(res);
@@ -220,3 +213,4 @@
     ]
 </div>
 </div>
+</body></html>
