@@ -1,9 +1,14 @@
-# api documentation for  [ttf2woff (v2.0.1)](https://github.com/fontello/ttf2woff#readme)  [![npm package](https://img.shields.io/npm/v/npmdoc-ttf2woff.svg?style=flat-square)](https://www.npmjs.org/package/npmdoc-ttf2woff) [![travis-ci.org build-status](https://api.travis-ci.org/npmdoc/node-npmdoc-ttf2woff.svg)](https://travis-ci.org/npmdoc/node-npmdoc-ttf2woff)
+# npmdoc-ttf2woff
+
+#### basic api documentation for  [ttf2woff (v2.0.1)](https://github.com/fontello/ttf2woff#readme)  [![npm package](https://img.shields.io/npm/v/npmdoc-ttf2woff.svg?style=flat-square)](https://www.npmjs.org/package/npmdoc-ttf2woff) [![travis-ci.org build-status](https://api.travis-ci.org/npmdoc/node-npmdoc-ttf2woff.svg)](https://travis-ci.org/npmdoc/node-npmdoc-ttf2woff)
+
 #### Convert TTF font to WOFF
 
-[![NPM](https://nodei.co/npm/ttf2woff.png?downloads=true)](https://www.npmjs.com/package/ttf2woff)
+[![NPM](https://nodei.co/npm/ttf2woff.png?downloads=true&downloadRank=true&stars=true)](https://www.npmjs.com/package/ttf2woff)
 
-[![apidoc](https://npmdoc.github.io/node-npmdoc-ttf2woff/build/screenCapture.buildNpmdoc.browser._2Fhome_2Ftravis_2Fbuild_2Fnpmdoc_2Fnode-npmdoc-ttf2woff_2Ftmp_2Fbuild_2Fapidoc.html.png)](https://npmdoc.github.io/node-npmdoc-ttf2woff/build/apidoc.html)
+- [https://npmdoc.github.io/node-npmdoc-ttf2woff/build/apidoc.html](https://npmdoc.github.io/node-npmdoc-ttf2woff/build/apidoc.html)
+
+[![apidoc](https://npmdoc.github.io/node-npmdoc-ttf2woff/build/screenCapture.buildCi.browser.%252Ftmp%252Fbuild%252Fapidoc.html.png)](https://npmdoc.github.io/node-npmdoc-ttf2woff/build/apidoc.html)
 
 ![npmPackageListing](https://npmdoc.github.io/node-npmdoc-ttf2woff/build/screenCapture.npmPackageListing.svg)
 
@@ -17,8 +22,7 @@
 
 {
     "author": {
-        "name": "Viktor Semykin",
-        "email": "thesame.ml@gmail.com"
+        "name": "Viktor Semykin"
     },
     "bin": {
         "ttf2woff": "./ttf2woff.js"
@@ -56,13 +60,11 @@
     "license": "MIT",
     "maintainers": [
         {
-            "name": "vitaly",
-            "email": "vitaly@rcdesign.ru"
+            "name": "vitaly"
         }
     ],
     "name": "ttf2woff",
     "optionalDependencies": {},
-    "readme": "ERROR: No README data found!",
     "repository": {
         "type": "git",
         "url": "git+https://github.com/fontello/ttf2woff.git"
@@ -74,16 +76,6 @@
     "version": "2.0.1"
 }
 ```
-
-
-
-# <a name="apidoc.tableOfContents"></a>[table of contents](#apidoc.tableOfContents)
-
-#### [module ttf2woff](#apidoc.module.ttf2woff)
-
-
-
-# <a name="apidoc.module.ttf2woff"></a>[module ttf2woff](#apidoc.module.ttf2woff)
 
 
 
